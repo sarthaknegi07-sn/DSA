@@ -9,32 +9,27 @@
  */
 class Solution {
 public:
-    bool fn(TreeNode* root, int k,vector<TreeNode*>&res){
-        if(root==NULL)
-            return false;
-        res.push_back(root);
-        if(root->val==k)
-            return true;
-        if(fn(root->left,k,res) || fn(root->right,k,res))
-            return true;
-        res.pop_back();
-        return false;
+    TreeNode* lca(TreeNode* root,TreeNode* p,TreeNode* q){
+        if(root==NULL || root==p || root==q)
+            return root;
+        
+        TreeNode* left=lca(root->left,p,q);
+        TreeNode* right=lca(root->right,p,q);
+
+        // when coming upwards 
+        // if left is null no matter what is right ,right will be returned
+        if(left==NULL)  
+            return right;
+        else if(right==NULL)
+            return left;
+        // if equal
+        else
+            return root;
     }
 
     TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
-        if(root==NULL)
-            return {};
-
-        // find the route of both p and q nodes from root node
-        vector<TreeNode*>res1;
-        vector<TreeNode*>res2;
-        fn(root,p->val,res1);
-        fn(root,q->val,res2);
-
-        // now iterate in both the arrays 
-        int i=0;
-        while(i<res1.size() && i<res2.size() && res1[i]==res2[i])
-            i++;
-        return res1[i-1];
+        if(root==NULL)  
+            return nullptr;
+        return lca(root,p,q);
     }
 };
