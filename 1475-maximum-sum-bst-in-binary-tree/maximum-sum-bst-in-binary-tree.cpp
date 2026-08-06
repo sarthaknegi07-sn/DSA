@@ -11,13 +11,14 @@
  */
 class Solution {
 public:
-    
+
     class Nodevalue{
     public:
         int minnode;
         int maxnode;
         int maxsize;
         int sum;
+
         Nodevalue(int mn,int mx,int sz,int sm){
             minnode=mn;
             maxnode=mx;
@@ -25,33 +26,47 @@ public:
             sum=sm;
         }
     };
+
     int ans=0;
+
     Nodevalue largestsum(TreeNode* root){
+
+        // Empty tree is a BST
         if(!root)
             return Nodevalue(INT_MAX,INT_MIN,0,0);
 
-        // get values from left and right subtree of the current tree
+        // Get information from left and right subtree
         auto left=largestsum(root->left);
         auto right=largestsum(root->right);
 
-        // now check if curr node is greater than max in left and 
-        // smaller than min in right
-
-        // ITS A BST
+        // Current subtree is BST
         if(left.maxnode < root->val && root->val < right.minnode){
-            int currsum=root->val+left.sum+right.sum;
+
+            int currsum=left.sum+right.sum+root->val;
             ans=max(ans,currsum);
 
-            return Nodevalue(min(left.minnode,root->val),max(root->val,right.maxnode),left.maxsize+1+right.maxsize,currsum);
+            return Nodevalue(
+                min(left.minnode,root->val),
+                max(right.maxnode,root->val),
+                left.maxsize+right.maxsize+1,
+                currsum
+            );
         }
 
-        // OTHERWISE RETURN [INF,-INF] SO THAT PARENT CANT BE VALID BST
-        return Nodevalue(INT_MIN,INT_MAX,max(left.maxsize,right.maxsize),0);
+        // Current subtree is not BST
+        // Return invalid range so parent can never become BST
+        return Nodevalue(
+            INT_MIN,
+            INT_MAX,
+            max(left.maxsize,right.maxsize),
+            0
+        );
     }
 
     int maxSumBST(TreeNode* root) {
-        // HERE WE WILL PERFORM POST ORDER TRSAVERSAL
+
         largestsum(root);
-        return  ans; 
+
+        return ans;
     }
 };
