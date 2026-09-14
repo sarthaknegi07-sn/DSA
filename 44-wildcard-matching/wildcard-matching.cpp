@@ -23,7 +23,7 @@ public:
         else if(p[i]=='*')  // not take or take
             return dp[i][j]=fn(i-1,j,p,s,dp) || fn(i,j-1,p,s,dp);
         
-        return dp[i][j]=false;
+        return false;
     }
     bool isMatch(string s, string p) {
         int m =s.size();
